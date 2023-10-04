@@ -28,7 +28,7 @@ namespace RetoLibreria.Controllers
           {
               return NotFound();
           }
-            return await _context.Books.ToListAsync();
+            return await _context.Books.Include(x=>x.User).ToListAsync();
         }
 
         // GET: api/Books/5
@@ -89,7 +89,22 @@ namespace RetoLibreria.Controllers
           {
               return Problem("Entity set 'DataContext.Books'  is null.");
           }
-            _context.Books.Add(book);
+            var _user = _context.Users.FirstOrDefault(x => x.Id == book.UserId);
+
+            if (_user == null)
+            {
+                return NotFound("Usuario no encontrado.");
+            }
+
+            var newBook = new Book
+            {
+                Titulo = book.Titulo,
+                Autor = book.Autor,
+                APublicacion = book.APublicacion,
+                User = _user,
+            };
+
+            _context.Books.Add(newBook);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetBook", new { id = book.Id }, book);
@@ -121,3 +136,5 @@ namespace RetoLibreria.Controllers
         }
     }
 }
+
+

@@ -11,8 +11,8 @@ using RetoLibreria.Modelos;
 namespace RetoLibreria.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231001172840_InitialDb")]
-    partial class InitialDb
+    [Migration("20231004002911_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,7 +44,12 @@ namespace RetoLibreria.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Books");
                 });
@@ -117,6 +122,22 @@ namespace RetoLibreria.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("RetoLibreria.Modelos.Book", b =>
+                {
+                    b.HasOne("RetoLibreria.Modelos.User", "User")
+                        .WithMany("Books")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("RetoLibreria.Modelos.User", b =>
+                {
+                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }

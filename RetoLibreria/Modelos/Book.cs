@@ -8,11 +8,11 @@
         public string Titulo { get; set; }
         public string Autor { get; set; }
         public string APublicacion { get; set; }
-        
+        public int UserId { get; set; }
         public User User { get; set; }
 
-        public List<Calificacion> Calificaciones { get; set;}
-        public List<Resena> Resenas { get; set; }
+        //public List<Calificacion> Calificaciones { get; set;}
+        //public List<Resena> Resenas { get; set; }
 
 
 

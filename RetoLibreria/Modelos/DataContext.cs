@@ -17,13 +17,19 @@ namespace RetoLibreria.Modelos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 
         {
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Books)
-                .WithOne()
-                .HasForeignKey(l => l.User);
-        
+            base.OnModelCreating(modelBuilder);
 
-   
+            modelBuilder.Entity<User>()
+              .HasMany(u => u.Books)
+              .WithOne(b => b.User)
+
+          .OnDelete(DeleteBehavior.Cascade);
+
+            /* modelBuilder.Entity<Book>()
+             .HasOne(b => b.User)
+             .WithMany(u => u.Books)
+             .OnDelete(DeleteBehavior.Cascade);*/
+
         }
         
 
