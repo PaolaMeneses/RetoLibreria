@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
 
 namespace RetoLibreria.Modelos
 {
 
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<IdentityUser>
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -15,21 +17,34 @@ namespace RetoLibreria.Modelos
         public DbSet<Resena> Resenas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-
         {
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<IdentityUser>()
+            .HasKey(u => u.Id);
 
-            modelBuilder.Entity<User>()
-              .HasMany(u => u.Books)
-              .WithOne(b => b.User)
+            modelBuilder.Entity<IdentityRole>()
+            .HasKey(r => r.Id);
 
-          .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<IdentityUserRole<string>>()
+            .HasKey(r => new { r.UserId, r.RoleId });
 
-            /* modelBuilder.Entity<Book>()
-             .HasOne(b => b.User)
-             .WithMany(u => u.Books)
-             .OnDelete(DeleteBehavior.Cascade);*/
+            modelBuilder.Entity<IdentityUserLogin<string>>()
+            .HasKey(l => new { l.LoginProvider, l.ProviderKey });
 
+            {
+                base.OnModelCreating(modelBuilder);
+
+                modelBuilder.Entity<User>()
+                  .HasMany(u => u.Books)
+                  .WithOne(b => b.User)
+
+              .OnDelete(DeleteBehavior.Cascade);
+
+                 modelBuilder.Entity<Book>()
+                 .HasOne(b => b.User)
+                 .WithMany(u => u.Books)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+            }
         }
         
 

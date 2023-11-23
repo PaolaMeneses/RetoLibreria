@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using RetoLibreria.Configurations;
+using RetoLibreria.Literals;
 using RetoLibreria.Modelos;
 using System.Text.Json.Serialization;
 
@@ -8,12 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers().AddJsonOptions(x=>x.JsonSerializerOptions.ReferenceHandler=ReferenceHandler.Preserve);
-builder.Services.AddDbContext<DataContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
+builder.Services.SetDatabaseConfiguration();
+builder.Services.SetRetoLibreriaAuthConfiguration();
+builder.Services.AddControllers().AddJsonOptions(x=>x.JsonSerializerOptions.ReferenceHandler=ReferenceHandler.Preserve); // referencia circular (cuando reciba un caso de referencia dele un manejo y preserve la referencia que tenga)
 
 
 var app = builder.Build();
@@ -27,13 +26,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthorization();
+app.UseAuthentication();
+
 app.UseRouting();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 }
 );
-
 
 app.Run();
 
